@@ -5,10 +5,7 @@ const REDIS_HOST = process.env.REDIS_HOST || '127.0.0.1';
 const REDIS_PORT = process.env.REDIS_PORT || 6379;
 
 const client = redis.createClient({
-  socket: {
-    host: REDIS_HOST,
-    port: REDIS_PORT,
-  },
+  url: process.env.UPSTASH_REDIS_URL, // <-- direct URL from Upstash
 });
 
 client.on('error', (err) => {
