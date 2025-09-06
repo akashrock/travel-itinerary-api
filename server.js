@@ -12,7 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 // ---------------------
-// Routes (fix paths here)
+// Routes
 // ---------------------
 app.use('/api/auth', require('./src/routes/auth'));
 app.use('/api/itineraries', require('./src/routes/itinerary'));
@@ -22,10 +22,7 @@ app.use('/api/itineraries', require('./src/routes/itinerary'));
 // ---------------------
 const connectMongo = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect(process.env.MONGO_URI); // removed deprecated options
     console.log('✅ MongoDB connected');
   } catch (err) {
     console.error('❌ MongoDB connection failed, retrying in 5s...', err.message);
@@ -39,7 +36,7 @@ const connectMongo = async () => {
 const redisClient = redis.createClient({
   socket: {
     host: process.env.REDIS_HOST || '127.0.0.1',
-    port: process.env.REDIS_PORT || 6379,
+    port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : 6379,
   },
 });
 
@@ -75,3 +72,6 @@ const startServer = async () => {
 };
 
 startServer();
+
+// Export Redis client if needed elsewhere
+module.exports = redisClient;
