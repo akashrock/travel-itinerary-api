@@ -52,7 +52,7 @@ exports.getItineraries = async (req, res) => {
       .skip((page - 1) * limit)
       .limit(Number(limit));
 
-    // Cache result for 10 seconds
+    // Cache result for 120 seconds
     if (client) await client.setEx(cacheKey, CACHE_EXPIRY, JSON.stringify(itineraries));
 
     res.status(200).json(itineraries);

@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
 
-dotenv.config();
+dotenv.config({ path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env', quiet: true });
 
 const app = express();
 app.use(cors());
@@ -45,6 +45,9 @@ const startServer = async () => {
   });
 };
 
-startServer();
+if (process.env.NODE_ENV !== 'test') {
+  startServer();
+}
 
-module.exports = redisClient;
+module.exports = { app, redisClient };
+

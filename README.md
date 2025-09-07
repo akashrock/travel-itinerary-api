@@ -5,11 +5,13 @@ A simple Node.js + Express API with MongoDB and Redis for managing travel itiner
 ---
 
 ## 🚀 Features
-- User registration & login (with JWT auth)
+
+- User registration & authentication (JWT)
 - Create, read, update, delete itineraries
-- MongoDB for data persistence
-- Redis for caching
-- Ready for local development & deployment
+- Share itineraries without exposing user info
+- Redis caching for better performance
+- Pagination, sorting, and destination search
+- Dockerized setup for API + MongoDB
 
 ---
 
@@ -60,6 +62,19 @@ Server should start at:
 
 ---
 
+
+## 🐳 Start the API with Docker
+
+Start all containers (API + MongoDB) in detached mode:
+
+```bash
+docker-compose up -d
+```
+Stop the Containers
+
+```bash
+docker-compose down
+```
 ## 📌 API Documentation
 
 ### 🔐 Auth Routes

@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    container_name: travel-api
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+    networks:
+      - travel-network
+
+  mongo:
+    image: mongo:7.0
+    container_name: travel-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - travel-network
+
+volumes:
+  mongo-data:
+
+networks:
+  travel-network:
+    driver: bridge
