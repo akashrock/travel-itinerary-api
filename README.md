@@ -175,9 +175,40 @@ docker-compose down
   "message": "Itinerary deleted successfully"
 }
 ```
+#### 4. Share Itinerary Feature
+1. Generate Share Link (private, requires login)
 
----
+POST /api/itineraries/:id/share
+🔒 Requires JWT token in header.
 
+✅ Response Example
+```json
+{
+  "shareableUrl": "http://localhost:5000/api/itineraries/share/0a5e1d3f-3a2b-4c8e-bd91-f94b3a4c75d7"
+}
+```
+2. Access Public Shared Itinerary (no login required)
+
+GET /api/itineraries/share/:shareableId
+
+✅ Response Example
+```json
+{
+  "title": "Trip to Goa",
+  "destination": "Goa",
+  "startDate": "2025-09-10T00:00:00.000Z",
+  "endDate": "2025-09-15T00:00:00.000Z",
+  "activities": [
+    {
+      "time": "10:00 AM",
+      "description": "Beach visit",
+      "location": "Baga Beach"
+    }
+  ],
+  "createdAt": "2025-09-07T10:21:45.000Z",
+  "updatedAt": "2025-09-07T10:21:45.000Z"
+}
+```
 ## 🌍 Deployment Notes
 - Make sure to update **MongoDB URI** (e.g., MongoDB Atlas) & Redis connection
 
