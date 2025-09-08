@@ -1,5 +1,5 @@
 const Itinerary = require('../models/Itinerary');
-const redis = require('redis');
+const { v4: uuidv4 } = require('uuid');
 const mongoose = require('mongoose');
 const client = require('../redis'); 
 
@@ -134,21 +134,41 @@ exports.deleteItinerary = async (req, res) => {
   }
 };
 
-// =========================
-// SHARE ITINERARY
-// =========================
-exports.shareItinerary = async (req, res) => {
+// Generate shareable link
+exports.generateShareLink = async (req, res) => {
   try {
-    const { shareableId } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(shareableId)) {
-      return res.status(400).json({ message: 'Invalid itinerary ID' });
+    const itinerary = await Itinerary.findOne({ _id: req.params.id, userId: req.user.id });
+    if (!itinerary) {
+      return res.status(404).json({ message: 'Itinerary not found' });
     }
 
-    const itinerary = await Itinerary.findById(shareableId).select('-userId');
-    if (!itinerary) return res.status(404).json({ message: 'Itinerary not found' });
+    if (!itinerary.shareableId) {
+      itinerary.shareableId = uuidv4();
+      await itinerary.save();
+    }
 
-    res.status(200).json(itinerary);
-  } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    const shareableUrl = `${req.protocol}://${req.get('host')}/api/itineraries/share/${itinerary.shareableId}`;
+    res.json({ shareableUrl });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+
+// Public endpoint to fetch itinerary via shareableId
+exports.shareItinerary = async (req, res) => {
+  try {
+    const itinerary = await Itinerary.findOne({ shareableId: req.params.shareableId }).lean();
+    if (!itinerary) {
+      return res.status(404).json({ message: 'Itinerary not found' });
+    }
+
+    // Remove sensitive fields before sending
+    delete itinerary.userId;
+    delete itinerary._id;
+
+    res.json(itinerary);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
   }
 };

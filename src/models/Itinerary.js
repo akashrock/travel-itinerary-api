@@ -13,6 +13,7 @@ const itinerarySchema = new mongoose.Schema({
   startDate: Date,
   endDate: Date,
   activities: [activitySchema],
+  shareableId: { type: String, unique: true, sparse: true },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Itinerary', itinerarySchema);

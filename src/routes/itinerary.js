@@ -6,6 +6,7 @@ const {
   getItinerary,
   updateItinerary,
   deleteItinerary,
+   generateShareLink,  
   shareItinerary
 } = require('../controllers/itineraryController');
 
@@ -14,6 +15,7 @@ router.get('/', auth, getItineraries);
 router.get('/:id', auth, getItinerary);
 router.put('/:id', auth, updateItinerary);
 router.delete('/:id', auth, deleteItinerary);
+router.post('/:id/share', auth, generateShareLink);
 router.get('/share/:shareableId', shareItinerary);
 
 module.exports = router;
