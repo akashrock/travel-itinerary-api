@@ -172,3 +172,31 @@ exports.shareItinerary = async (req, res) => {
     res.status(500).json({ message: 'Server error', error });
   }
 };
+// Public endpoint to fetch itinerary via shareableId
+exports.getUserCount = async (req, res) => {
+  try {
+    const result = await Itinerary.aggregate([
+      {
+        $lookup: {
+          from: "users",       // users collection
+          localField: "userId",
+          foreignField: "_id",
+          as: "user"
+        }
+      },
+      { $unwind: "$user" },  
+      {
+        $group: {
+          _id: "$user.name",   
+          count: { $sum: 1 }  
+        }
+      },
+      { $project: { _id: 0, name: "$_id", count: 1 } } // clean output
+    ]);
+
+    return res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
